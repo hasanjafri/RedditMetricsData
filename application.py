@@ -32,7 +32,7 @@ class get_script_text(Resource):
 class convert_text_to_dataframe(Resource):
     def get(self, rm_user):
         get_data = ScrapeRedditMetrics(url='http://redditmetrics.com/r/'+rm_user)
-        resp = get_data.convert_text_to_dataframe(get_data.retreive_data(get_data.get_script_text()))
+        resp = get_data.convert_text_to_dataframe(get_data.retrieve_data(get_data.get_script_text()))
         logging.info({'Searched for': rm_user})
         return jsonify(response=resp)
 
