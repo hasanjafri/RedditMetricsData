@@ -1,6 +1,6 @@
 import logging
 import os
-from flask import Flask, Response, send_from_directory, jsonify
+from flask import Flask, Response, send_from_directory, jsonify, make_response
 from flask_restful import Resource, Api
 from ExtractRedditMetricsData import ScrapeRedditMetrics
 
@@ -34,7 +34,10 @@ class convert_text_to_dataframe(Resource):
         get_data = ScrapeRedditMetrics(url='http://redditmetrics.com/r/'+rm_user)
         resp = get_data.convert_text_to_dataframe(get_data.retrieve_data(get_data.get_script_text())).to_csv()
         logging.info({'Searched for': rm_user})
-        return Response(response=resp, mimetype='text/csv')
+        csv_resp = make_response(resp)
+        csv_resp.headers["Content-Disposition"] = "attachment; filename=results.csv"
+        csv_resp.headers["Content-type"] = "text/csv"
+        return(csv_resp)
 
 api.add_resource(retrieve_data, '/rd/<string:rm_user>')
 api.add_resource(get_script_text, '/gst/<string:rm_user>')
