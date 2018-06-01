@@ -14,7 +14,7 @@ def favicon():
 
 api = Api(application)
 
-class ExtractRedditMetricsDataAPI(Resource):
+class retrieve_data(Resource):
     def get(self, rm_user):
         get_data = ScrapeRedditMetrics(url='http://redditmetrics.com/r/'+rm_user)
         resp = get_data.retrieve_data(get_data.get_script_text())
@@ -22,7 +22,15 @@ class ExtractRedditMetricsDataAPI(Resource):
         return Response(response=resp, mimetype='application/json')
         #return render_template("./df_template.html", html_data=get_data.convert_text_to_dataframe(resp_html).to_html(escape=False))
 
-api.add_resource(ExtractRedditMetricsDataAPI, '/<string:rm_user>')
+class get_script_text(Resource):
+    def get(self, rm_user):
+        get_data = ScrapeRedditMetrics(url='http://redditmetrics.com/r/'+rm_user)
+        resp = get_data.get_script_text()
+        logging.info({'Searched for': rm_user})
+        return Response(response=resp, mimetype='text/html')
+
+api.add_resource(retrieve_data, '/rd/<string:rm_user>')
+api.add_resource(get_script_text, '/gst/<string:rm_user>')
 
 if __name__ == '__main__':
     application.run(debug=True)
